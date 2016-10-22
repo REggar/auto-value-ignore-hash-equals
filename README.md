@@ -48,9 +48,11 @@ or Maven:
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository](https://oss.sonatype.org/content/repositories/snapshots/).
 
+
 ## Notes
 
 This library is heavily inspired by Square's [AutoValue: Redacted Extension](https://github.com/square/auto-value-redacted).
+
 
 ## License
 
