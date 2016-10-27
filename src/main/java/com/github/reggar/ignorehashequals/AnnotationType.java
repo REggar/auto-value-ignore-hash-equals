@@ -2,7 +2,7 @@ package com.github.reggar.ignorehashequals;
 
 import java.util.Set;
 
-public enum AnnotationType {
+enum AnnotationType {
     ERROR(""), // Error case
     INCLUDE("IncludeHashEquals"),
     IGNORE("IgnoreHashEquals"),

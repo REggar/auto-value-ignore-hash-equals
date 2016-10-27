@@ -3,9 +3,9 @@ An extension for Google's [AutoValue](https://github.com/google/auto/tree/master
 `@IgnoreHashEquals` field values from `hashCode()` and `equals()`.
 
 
-## Usage
+## Basic Usage
 
-Include the extension in your project, define a `@IgnoreHashEquals` annotation, and apply it to any
+Include the extension in your project, define an `@IgnoreHashEquals` annotation, and apply it to any
 fields that you wish to be ignored from the generated `hashCode` and `equals` implementation.
 
 ```java
@@ -18,14 +18,36 @@ public @interface IgnoreHashEquals {
 ```java
 @AutoValue
 public abstract class User {
-  public abstract String name();
-  @IgnoreHashEquals public abstract String location();
+  public abstract String id();
+  @IgnoreHashEquals public abstract String name();
 }
 ```
 
-When you call `hashCode()` or `equals()` any `@IgnoreHashEquals` properties will be ignored from the
-calculation.
+When you call `hashCode()` or `equals()` any properties **with** `@IgnoreHashEquals` will be ignored
+from the calculation.
 
+## @IncludeHashEquals Usage
+
+Include the extension in your project, define an `@IncludeHashEquals` annotation, and apply it to any
+fields that you wish to be included from the generated `hashCode` and `equals` implementation.
+
+```java
+@Retention(SOURCE)
+@Target({METHOD, PARAMETER, FIELD})
+public @interface IncludeHashEquals {
+}
+```
+
+```java
+@AutoValue
+public abstract class User {
+  @IncludeHashEquals public abstract String id();
+  public abstract String name();
+}
+```
+
+When you call `hashCode()` or `equals()` any properties **without** `@IncludeHashEquals` will be ignored
+from the calculation.
 
 ## Download
 

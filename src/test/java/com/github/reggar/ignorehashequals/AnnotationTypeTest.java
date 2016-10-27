@@ -12,8 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 public class AnnotationTypeTest {
 
-    @Test
-    public void shouldBeIncluded() throws Exception {
+    @Test public void shouldBeIncluded() throws Exception {
         assertTrue(AnnotationType.INCLUDE.shouldBeIncluded(Collections.singleton("IncludeHashEquals")));
         assertFalse(AnnotationType.IGNORE.shouldBeIncluded(Collections.singleton("IgnoreHashEquals")));
 
@@ -27,8 +26,7 @@ public class AnnotationTypeTest {
         assertTrue(AnnotationType.ERROR.shouldBeIncluded(Collections.<String>emptySet()));
     }
 
-    @Test
-    public void from() throws Exception {
+    @Test public void from() throws Exception {
         assertEquals(AnnotationType.INCLUDE, AnnotationType.from(Collections.singleton("IncludeHashEquals")));
 
         assertEquals(AnnotationType.IGNORE, AnnotationType.from(Collections.singleton("IgnoreHashEquals")));
