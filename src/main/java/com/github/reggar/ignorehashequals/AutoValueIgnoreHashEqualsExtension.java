@@ -40,12 +40,20 @@ import javax.lang.model.element.Name;
 @AutoService(AutoValueExtension.class) public final class AutoValueIgnoreHashEqualsExtension
     extends AutoValueExtension {
 
+  private static AnnotationType annotationType;
+
   @Override public boolean applicable(Context context) {
     Map<String, ExecutableElement> properties = context.properties();
     for (ExecutableElement element : properties.values()) {
-      if (getAnnotations(element).contains("IgnoreHashEquals")) {
-        return true;
+      Set<String> annotations = getAnnotations(element);
+
+      annotationType = AnnotationType.from(annotations);
+      if (annotationType == AnnotationType.ERROR) {
+        throw new RuntimeException("Annotations are mutually exclusive, " +
+                "only one annotation type can be included at the same time.");
       }
+
+      return annotationType != AnnotationType.NOT_PRESENT;
     }
 
     return false;
@@ -101,9 +109,7 @@ import javax.lang.model.element.Name;
       ExecutableElement propertyElement = entry.getValue();
       Set<String> propertyAnnotations = getAnnotations(propertyElement);
 
-      boolean ignored = propertyAnnotations.contains("IgnoreHashEquals");
-
-      if (!ignored) {
+      if (annotationType.shouldBeIncluded(propertyAnnotations)) {
         builder.addCode("h *= 1000003;\n");
         builder.addCode("h ^= " + generateHashCodeExpression(propertyElement) + ";");
       }
@@ -172,9 +178,7 @@ import javax.lang.model.element.Name;
       ExecutableElement propertyElement = entry.getValue();
       Set<String> propertyAnnotations = getAnnotations(propertyElement);
 
-      boolean ignored = propertyAnnotations.contains("IgnoreHashEquals");
-
-      if(!ignored) {
+      if(annotationType.shouldBeIncluded(propertyAnnotations)) {
         nonIgnoredExecutableElements.add(propertyElement);
       }
     }
