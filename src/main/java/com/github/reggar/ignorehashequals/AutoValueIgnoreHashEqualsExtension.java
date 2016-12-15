@@ -53,7 +53,9 @@ import javax.lang.model.element.Name;
                 "only one annotation type can be included at the same time.");
       }
 
-      return annotationType != AnnotationType.NOT_PRESENT;
+      if (annotationType != AnnotationType.NOT_PRESENT) {
+        return true;
+      }
     }
 
     return false;
