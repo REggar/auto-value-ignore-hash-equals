@@ -54,7 +54,7 @@ from the calculation.
 Add a Gradle dependency:
 
 ```groovy
-apt 'com.github.reggar:auto-value-ignore-hash-equals:1.1.0'
+apt 'com.github.reggar:auto-value-ignore-hash-equals:1.1.2'
 ```
 (Using the [android-apt](https://bitbucket.org/hvisser/android-apt) plugin)
 
@@ -63,7 +63,7 @@ or Maven:
 <dependency>
   <groupId>com.github.reggar</groupId>
   <artifactId>auto-value-ignore-hash-equals</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.2</version>
   <scope>provided</scope>
 </dependency>
 ```
