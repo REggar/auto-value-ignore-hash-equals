@@ -150,6 +150,89 @@ public final class AutoValueIgnoreHashEqualsExtensionTest {
         .generatesSources(expectedSource);
   }
 
+  @Test public void ignoreHashEqualsAnnotationForNestedClass() {
+    JavaFileObject source = JavaFileObjects.forSourceString("test.Parent", ""
+            + "package test;\n"
+            + "import com.google.auto.value.AutoValue;\n"
+            + "public class Parent {\n"
+            + "@AutoValue public static abstract class Test {\n"
+            + "public abstract int a();\n"
+            + "@IgnoreHashEquals public abstract String b();\n"
+            + "public abstract long c();\n"
+            + "public abstract float d();\n"
+            + "public abstract double e();\n"
+            + "public abstract boolean f();\n"
+            + "public abstract int[] g();\n"
+            + "public abstract String h();\n"
+            + "@Nullable public abstract String i();\n"
+            + "}\n"
+            + "}\n"
+    );
+
+    JavaFileObject expectedSource = JavaFileObjects.forSourceString("test/AutoValue_Parent_Test", ""
+            + "package test;\n"
+            + "\n"
+            + "import java.lang.Object;\n"
+            + "import java.lang.Override;\n"
+            + "import java.lang.String;\n"
+            + "import java.util.Arrays;\n"
+            + "\n"
+            + "final class AutoValue_Parent_Test extends $AutoValue_Parent_Test {\n"
+            + "  AutoValue_Parent_Test(int a, String b, long c, float d, double e, boolean f, int[] g, String h, String i) {\n"
+            + "    super(a, b, c, d, e, f, g, h, i);\n"
+            + "  }\n"
+            + "\n"
+            + "  @Override\n"
+            + "  public final boolean equals(Object o) {\n"
+            + "    if (o == this) {\n"
+            + "      return true;\n"
+            + "    }\n"
+            + "    if (o instanceof Parent.Test) {\n"
+            + "      Parent.Test that = (Parent.Test) o;\n"
+            + "      return (this.a() == that.a())\n"
+            + "          && (this.c() == that.c())\n"
+            + "          && (Float.floatToIntBits(this.d()) == Float.floatToIntBits(that.d()))\n"
+            + "          && (Double.doubleToLongBits(this.e()) == Double.doubleToLongBits(that.e()))\n"
+            + "          && (this.f() == that.f())\n"
+            + "          && (Arrays.equals(this.g(), that.g()))\n"
+            + "          && (this.h().equals(that.h()))\n"
+            + "          && ((this.i() == null) ? (that.i() == null) : this.i().equals(that.i()));\n"
+            + "    }\n"
+            + "    return false;\n"
+            + "  }\n"
+            + "\n"
+            + "  @Override\n"
+            + "  public final int hashCode() {\n"
+            + "    int h = 1;\n"
+            + "    h *= 1000003;\n"
+            + "    h ^= this.a();\n"
+            + "    h *= 1000003;\n"
+            + "    h ^= (this.c() >>> 32) ^ this.c();\n"
+            + "    h *= 1000003;\n"
+            + "    h ^= Float.floatToIntBits(this.d());\n"
+            + "    h *= 1000003;\n"
+            + "    h ^= (Double.doubleToLongBits(this.e()) >>> 32) ^ Double.doubleToLongBits(this.e());\n"
+            + "    h *= 1000003;\n"
+            + "    h ^= this.f() ? 1231 : 1237;\n"
+            + "    h *= 1000003;\n"
+            + "    h ^= java.util.Arrays.hashCode(this.g());\n"
+            + "    h *= 1000003;\n"
+            + "    h ^= this.h().hashCode();\n"
+            + "    h *= 1000003;\n"
+            + "    h ^= (i() == null) ? 0 : this.i().hashCode();\n"
+            + "    return h;\n"
+            + "  }\n"
+            + "}"
+    );
+
+    assertAbout(javaSources())
+            .that(Arrays.asList(ignoreHashEquals, nullable, source))
+            .processedWith(new AutoValueProcessor())
+            .compilesWithoutError()
+            .and()
+            .generatesSources(expectedSource);
+  }
+
   @Test public void includeHashEqualsAnnotation() {
     JavaFileObject source = JavaFileObjects.forSourceString("test.Test", ""
             + "package test;\n"
@@ -186,6 +269,70 @@ public final class AutoValueIgnoreHashEqualsExtensionTest {
             + "    }\n"
             + "    if (o instanceof Test) {\n"
             + "      Test that = (Test) o;\n"
+            + "      return ((this.a() == null) ? (that.a() == null) : this.a().equals(that.a()))\n"
+            + "          && (this.b() == that.b());\n"
+            + "    }\n"
+            + "    return false;\n"
+            + "  }\n"
+            + "\n"
+            + "  @Override\n"
+            + "  public final int hashCode() {\n"
+            + "    int h = 1;\n"
+            + "    h *= 1000003;\n"
+            + "    h ^= (a() == null) ? 0 : this.a().hashCode();\n"
+            + "    h *= 1000003;\n"
+            + "    h ^= this.b();\n"
+            + "    return h;\n"
+            + "  }\n"
+            + "}"
+    );
+
+    assertAbout(javaSources())
+            .that(Arrays.asList(includeHashEquals, nullable, source))
+            .processedWith(new AutoValueProcessor())
+            .compilesWithoutError()
+            .and()
+            .generatesSources(expectedSource);
+  }
+
+  @Test public void includeHashEqualsAnnotationForNestedClass() {
+    JavaFileObject source = JavaFileObjects.forSourceString("test.Parent", ""
+            + "package test;\n"
+            + "import com.google.auto.value.AutoValue;\n"
+            + "public class Parent {\n"
+            + "@AutoValue public static abstract class Test {\n"
+            + "@IncludeHashEquals @Nullable public abstract String a();\n"
+            + "@IncludeHashEquals public abstract int b();\n"
+            + "public abstract long c();\n"
+            + "public abstract float d();\n"
+            + "public abstract double e();\n"
+            + "public abstract boolean f();\n"
+            + "public abstract int[] g();\n"
+            + "public abstract String h();\n"
+            + "@Nullable public abstract String i();\n"
+            + "}\n"
+            + "}\n"
+    );
+
+    JavaFileObject expectedSource = JavaFileObjects.forSourceString("test/AutoValue_Parent_Test", ""
+            + "package test;\n"
+            + "\n"
+            + "import java.lang.Object;\n"
+            + "import java.lang.Override;\n"
+            + "import java.lang.String;\n"
+            + "\n"
+            + "final class AutoValue_Parent_Test extends $AutoValue_Parent_Test {\n"
+            + "  AutoValue_Parent_Test(String a, int b, long c, float d, double e, boolean f, int[] g, String h, String i) {\n"
+            + "    super(a, b, c, d, e, f, g, h, i);\n"
+            + "  }\n"
+            + "\n"
+            + "  @Override\n"
+            + "  public final boolean equals(Object o) {\n"
+            + "    if (o == this) {\n"
+            + "      return true;\n"
+            + "    }\n"
+            + "    if (o instanceof Parent.Test) {\n"
+            + "      Parent.Test that = (Parent.Test) o;\n"
             + "      return ((this.a() == null) ? (that.a() == null) : this.a().equals(that.a()))\n"
             + "          && (this.b() == that.b());\n"
             + "    }\n"
