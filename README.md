@@ -54,7 +54,7 @@ from the calculation.
 Add a Gradle dependency:
 
 ```groovy
-apt 'com.github.reggar:auto-value-ignore-hash-equals:1.1.2'
+apt 'com.github.reggar:auto-value-ignore-hash-equals:1.1.3'
 ```
 (Using the [android-apt](https://bitbucket.org/hvisser/android-apt) plugin)
 
@@ -63,7 +63,7 @@ or Maven:
 <dependency>
   <groupId>com.github.reggar</groupId>
   <artifactId>auto-value-ignore-hash-equals</artifactId>
-  <version>1.1.2</version>
+  <version>1.1.3</version>
   <scope>provided</scope>
 </dependency>
 ```
@@ -79,7 +79,7 @@ This library is heavily inspired by Square's [AutoValue: Redacted Extension](htt
 ## License
 
 ```
-Copyright 2016 Robert Eggar.
+Copyright 2017 Robert Eggar.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

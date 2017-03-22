@@ -64,7 +64,7 @@ import javax.lang.model.element.Name;
   @Override public String generateClass(Context context, String className, String classToExtend,
       boolean isFinal) {
     String packageName = context.packageName();
-    Name superName = context.autoValueClass().getSimpleName();
+    ClassName superName = ClassName.get(context.autoValueClass());
     Map<String, ExecutableElement> properties = context.properties();
 
     TypeSpec subclass = TypeSpec.classBuilder(className) //
@@ -99,8 +99,8 @@ import javax.lang.model.element.Name;
         .build();
   }
 
-  private static MethodSpec generateHashCode(Name superName,
-      Map<String, ExecutableElement> properties) {
+  private static MethodSpec generateHashCode(ClassName superName,
+                                             Map<String, ExecutableElement> properties) {
     MethodSpec.Builder builder = MethodSpec.methodBuilder("hashCode") //
         .addAnnotation(Override.class) //
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL) //
@@ -155,8 +155,8 @@ import javax.lang.model.element.Name;
     }
   }
 
-  private static MethodSpec generateEquals(Name superName,
-      Map<String, ExecutableElement> properties) {
+  private static MethodSpec generateEquals(ClassName superName,
+                                           Map<String, ExecutableElement> properties) {
     MethodSpec.Builder builder = MethodSpec.methodBuilder("equals") //
         .addAnnotation(Override.class) //
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL) //
@@ -165,8 +165,8 @@ import javax.lang.model.element.Name;
         .addCode("if (o == this) {\n")
         .addCode("  return true;\n")
         .addCode("}\n")
-        .addCode("if (o instanceof $L) {\n", superName)
-        .addCode("  $L that = ($L) o;\n", superName, superName);
+        .addCode("if (o instanceof $T) {\n", superName)
+        .addCode("  $T that = ($T) o;\n", superName, superName);
 
     if (properties.size() == 0) {
       builder.addCode("return true;\n");
