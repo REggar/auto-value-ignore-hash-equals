@@ -363,7 +363,7 @@ public final class AutoValueIgnoreHashEqualsExtensionTest {
   }
 
 
-  @Test public void allFieldsIgnoredDoesntGenerateHashcodeEquals() {
+  @Test public void allFieldsIgnoredGenerateValidHashcodeEquals() {
     JavaFileObject source = JavaFileObjects.forSourceString("test.Test", ""
             + "package test;\n"
             + "import com.google.auto.value.AutoValue;\n"
