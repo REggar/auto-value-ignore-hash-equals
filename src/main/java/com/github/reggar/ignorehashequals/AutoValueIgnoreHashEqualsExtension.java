@@ -25,6 +25,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,10 +33,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.Name;
 
 @AutoService(AutoValueExtension.class) public final class AutoValueIgnoreHashEqualsExtension
     extends AutoValueExtension {
@@ -168,12 +169,6 @@ import javax.lang.model.element.Name;
         .addCode("if (o instanceof $T) {\n", superName)
         .addCode("  $T that = ($T) o;\n", superName, superName);
 
-    if (properties.size() == 0) {
-      builder.addCode("return true;\n");
-    } else {
-      builder.addCode("  return ");
-    }
-
     List<ExecutableElement> nonIgnoredExecutableElements = new ArrayList<>();
 
     for(Map.Entry<String, ExecutableElement> entry : properties.entrySet()) {
@@ -185,17 +180,23 @@ import javax.lang.model.element.Name;
       }
     }
 
-    boolean last = false;
-    for (int i = 0; i < nonIgnoredExecutableElements.size(); i++) {
-      ExecutableElement propertyElement = nonIgnoredExecutableElements.get(i);
+    if (nonIgnoredExecutableElements.size() == 0) {
+      builder.addCode("  return true");
+    } else {
+      builder.addCode("  return ");
 
-      if(i == nonIgnoredExecutableElements.size() - 1) {
-        last = true;
-      }
+      boolean last = false;
+      for (int i = 0; i < nonIgnoredExecutableElements.size(); i++) {
+        ExecutableElement propertyElement = nonIgnoredExecutableElements.get(i);
 
-      builder.addCode(generateEqualsExpression(propertyElement));
-      if (!last) {
-        builder.addCode("\n      && ");
+        if(i == nonIgnoredExecutableElements.size() - 1) {
+          last = true;
+        }
+
+        builder.addCode(generateEqualsExpression(propertyElement));
+        if (!last) {
+          builder.addCode("\n      && ");
+        }
       }
     }
 

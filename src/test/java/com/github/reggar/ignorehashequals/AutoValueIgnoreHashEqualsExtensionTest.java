@@ -17,10 +17,13 @@ package com.github.reggar.ignorehashequals;
 
 import com.google.auto.value.processor.AutoValueProcessor;
 import com.google.testing.compile.JavaFileObjects;
-import java.util.Arrays;
-import javax.tools.JavaFileObject;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Arrays;
+
+import javax.tools.JavaFileObject;
 
 import static com.google.common.truth.Truth.assertAbout;
 import static com.google.testing.compile.JavaSourcesSubjectFactory.javaSources;
@@ -353,6 +356,55 @@ public final class AutoValueIgnoreHashEqualsExtensionTest {
 
     assertAbout(javaSources())
             .that(Arrays.asList(includeHashEquals, nullable, source))
+            .processedWith(new AutoValueProcessor())
+            .compilesWithoutError()
+            .and()
+            .generatesSources(expectedSource);
+  }
+
+
+  @Test public void allFieldsIgnoredGenerateValidHashcodeEquals() {
+    JavaFileObject source = JavaFileObjects.forSourceString("test.Test", ""
+            + "package test;\n"
+            + "import com.google.auto.value.AutoValue;\n"
+            + "@AutoValue public abstract class Test {\n"
+            + "@IgnoreHashEquals public abstract int a();\n"
+            + "}\n"
+    );
+
+    JavaFileObject expectedSource = JavaFileObjects.forSourceString("test/AutoValue_Test", ""
+            + "package test;\n"
+            + "\n"
+            + "import java.lang.Object;\n"
+            + "import java.lang.Override;\n"
+            + "\n"
+            + "final class AutoValue_Test extends $AutoValue_Test {\n"
+            + "  AutoValue_Test(int a) {\n"
+            + "    super(a);\n"
+            + "  }\n"
+            + "\n"
+            + "  @Override\n"
+            + "  public final boolean equals(Object o) {\n"
+            + "    if (o == this) {\n"
+            + "      return true;\n"
+            + "    }\n"
+            + "    if (o instanceof Test) {\n"
+            + "      Test that = (Test) o;\n"
+            + "      return true;\n"
+            + "    }\n"
+            + "    return false;\n"
+            + "  }\n"
+            + "\n"
+            + "  @Override\n"
+            + "  public final int hashCode() {\n"
+            + "    int h = 1;\n"
+            + "    return h;\n"
+            + "  }\n"
+            + "}"
+    );
+
+    assertAbout(javaSources())
+            .that(Arrays.asList(ignoreHashEquals, nullable, source))
             .processedWith(new AutoValueProcessor())
             .compilesWithoutError()
             .and()
